@@ -1,0 +1,29 @@
+name: import-engine
+on:
+  push:
+    paths:
+      - .github/workflows/import-engine.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download built site
+        run: |
+          mkdir -p engine
+          curl -fsSL -o engine/index.html 'https://sg.migoo.ai/beeai/api/v1/media/signed/budee/2026/11/10/0faf4f7f.html?expires=1794309776&sig=b70a1bd684b4e2e81497c20c44fd5df3f93caaba80bb1e9f3c49133f9c0b1643'
+          echo '4f51714f805dc905ea504e4b878effc534b877fa6239aa32968164a88413c0a8  engine/index.html' | sha256sum -c -
+          git rm -q .github/workflows/import-engine.yml
+      - name: Commit and publish
+        run: |
+          git config user.name 'hhoshizora-usagi'
+          git config user.email '333192191+hhoshizora-usagi@users.noreply.github.com'
+          git add engine/index.html
+          git commit -m 'Add EPIC DAY.3 pattern-01 engine version (/engine/)'
+          git push origin HEAD:main
+          git push origin HEAD:gh-pages --force
