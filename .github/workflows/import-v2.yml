@@ -1,0 +1,28 @@
+name: import-v2
+on:
+  push:
+    paths:
+      - .github/workflows/import-v2.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download built site
+        run: |
+          curl -fsSL -o index.html 'https://sg.migoo.ai/beeai/api/v1/media/signed/budee/2026/11/11/35365628.html?expires=1794385847&sig=99ca43606ad20f97db12263c47aa193a807b7e1d1727082534d18d250f140340'
+          echo 'c645adb67830453b0d47b92a00d94b92b76b01bbf91620a7dfb1e0f110918937  index.html' | sha256sum -c -
+          git rm -q .github/workflows/import-v2.yml
+      - name: Commit and publish
+        run: |
+          git config user.name 'hhoshizora-usagi'
+          git config user.email '333192191+hhoshizora-usagi@users.noreply.github.com'
+          git add index.html
+          git commit -m 'EPIC DAY.3 v2: yellow 3D particle sphere hero with EPIC DAY lettering, single stage, theme copy'
+          git push origin HEAD:main
+          git push origin HEAD:gh-pages --force
